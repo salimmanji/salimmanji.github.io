@@ -1,0 +1,244 @@
+body {
+    margin: 20px;
+    background-color: #e9e9e9;
+    font-family: Open Sans, sans-serif;
+    font-size: 0.8rem;
+}
+
+.container {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 25rem 35rem auto;
+  grid-template-rows: 6rem 12rem 12rem 12rem 12rem;
+  color: #444;
+}
+
+.box {
+  background-color: #cdcdcd;
+  color: black;
+  border-radius: 5px;
+  padding: 20px;
+  font-size: 150%;
+}
+
+#header {
+  grid-column: 1 / span 3;
+  grid-row: 1;
+}
+  
+.b {
+  grid-column: 1 / span 1;
+  grid-row: 2 / span 4;
+}
+  
+.a {
+  grid-column: 2 / span 1;
+  grid-row: 2 / span 2;
+  }
+
+.c {
+  grid-column: 2 / span 1;
+  grid-row: 4 / span 2;
+}
+
+.d {
+  grid-column: 3 / span 1;
+  grid-row: 5;
+}
+
+.e {
+    grid-column: 3 / span 1;
+    grid-row: 2 / span 3;
+}
+
+li {
+    list-style-type: none;
+}
+
+.buttons {
+ font-family: Arial, Helvetica, sans-serif;
+}
+
+ul#companyList {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 375px;
+  height: 650px;
+  overflow-y: scroll;
+}
+ul#companyList li {
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+}
+div.a section {
+    display: block;
+    font-size: 1rem;	
+}
+
+div.b section {
+    display: none;
+}
+div.c section {
+    display: none;
+}
+
+div.e section {
+  display: none;
+  height: 460px;
+  grid-gap: 1px;
+  overflow-y: scroll;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  font-size: 0.9rem;
+  justify-items: left;
+  margin: 2px;
+}
+
+#headerBox {
+  display: grid;
+  height: 100px;
+  grid-gap: 1px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  font-size: 0.9rem;
+  justify-items: left;
+  margin: 2px;
+}
+
+div.d section {
+  display: none;
+  height: 100px;
+  grid-gap: 1px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  font-size: 0.9rem;
+  justify-items: left;
+  margin: 2px;
+}
+
+#stockDataList {
+  margin: 0;
+  padding: 0;
+  width: 375px;
+  height: 600px;
+  
+}
+
+#stockHeader {
+  grid-column: 1 / span 3;
+  grid-row: 1;
+  height: 10%;
+  
+}
+
+#stockHeader.div > button {
+  grid-column:  4 / span 3;
+  /* grid-row: 1; */
+  
+}
+
+#Dateheader {
+  grid-column: 1 / span 1;
+  
+}
+#Openheader {
+  grid-column: 2 / span 1;
+  
+}
+#Closeheader {
+  grid-column: 3 / span 1;
+  
+}
+#Lowheader {
+  grid-column: 4 / span 1;
+  
+}
+#Highheader {
+  grid-column: 5 / span 1;
+}
+
+#Volumeheader {
+  grid-column: 6 / span 1;
+}
+
+#stockData {
+  grid-column: 1 / span 3;
+}
+
+#dataButton {
+  grid-column: 4 / span 3;
+  height: 30px;
+  margin-top: 10px;
+}
+
+#boxF {
+  display: none;
+  grid-column: 1 / span 2;
+  grid-row: 2 / span 4;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+#boxG {
+  display: none;
+  grid-column: 3 / span 1;
+  grid-row: 2 / span 1;
+  grid-template-columns: 1fr 1fr;
+  /* grid-template-rows: 1rem 0.9rem 0.9rem; */
+  height: 150px;
+  grid-gap: 1px;
+}
+
+#chartName {
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 1;
+}
+
+#chartDesc {
+  grid-column: 1 / span 2;
+  grid-row: 2 / span 1;
+  font-size: 0.9rem;
+}
+
+#speakButton {
+  grid-column: 1 / span 1;
+  grid-row: 3 / span 1;
+  height: 30px;
+  width: 150px;
+}
+
+#defaultButton {
+  grid-column: 2 / span 1;
+  grid-row: 3 / span 1;
+  height: 30px;
+  width: 60px;
+}
+
+#boxH {
+  display: none;
+  grid-column: 3 / span 1;
+  grid-row: 3 / span 3;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 90px auto auto auto auto auto ;
+}
+
+#financeHeader {
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 1;
+  align-items: center;
+}
+
+#financeLogo {
+  grid-column: 3 / span 2;
+  grid-row: 1 / span 1;
+}
+
+#barGraph {
+  grid-column: 1 / span 1;
+  grid-row: 1 / span 1;
+  
+}
+
+#line {
+  grid-column: 1 / span 2;
+  grid-row: 2 / span 1;
+  
+}

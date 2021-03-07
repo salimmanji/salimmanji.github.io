@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>COMP3512 Assignment 1</title>
+
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,800" rel="stylesheet"> -->
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+    <main class="container">
+        <header id="header" class="box"><strong>COMP3512 Assignment 1 W2021</strong> <label
+                id="creditLabel"><u>Credits</u></label></header>
+        <div id="aBox" class="box a defaultView">
+
+            <section>Please select a company from the list on the left to populate financial data
+            </section>
+        </div>
+        <div class="box b defaultView">
+            <section>
+                <h2>List Of Companies</h2>
+                Filter: <input type="text" class="search" placeholder="Search for a Company"> <button id="clearButton"
+                    class="buttons">Clear Filter</button>
+                <p id="spacer"></p>
+                <ul id="companyList"></ul>
+            </section>
+        </div>
+        <div class="box d defaultView">
+            <section>
+            </section>
+        </div>
+        <div class="box e defaultView" id="dB">
+            <section>
+                <div id="stockDataList"></div>
+            </section>
+        </div>
+        <div id="map" class="box c defaultView"></div>
+        <div id="boxF" class="box f chartView">
+            <div>
+                <canvas id="barGraph" class="chartView"></canvas>
+            </div>
+            <div>
+                <canvas id="candle" class="chartView"></canvas>
+            </div>
+            <div>
+                <canvas id="line" class="chartView"></canvas>
+            </div>
+        </div>
+        <div id="boxG" class="box g chartView"></div>
+        <div id="boxH" class="box h chartView"></div>
+    </main>
+
+
+    <script src="js/asg1.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFntqntS9Zil7KF6-pBxxYKtEiyeG7hJA&callback=initMap"
+        async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+</body>
+
+</html>
