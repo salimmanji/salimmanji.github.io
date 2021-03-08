@@ -1144,7 +1144,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ]
             },
             {
-                label: "Volume (10,000s)",
+                label: "Volume (in 10,000 shares)",
                 data: [{
                     x: dates[0],
                     y: vols[0]
@@ -1413,7 +1413,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const chart = new Chart(ctx, {
             type: 'line',
             data: data,
-            options: {}
+            options: {
+                title: {
+                    display: true,
+                    text: 'Stock Volume and Closing Price per Day'
+                }
+            }
         })
     }
 
@@ -1555,7 +1560,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const chart = new Chart(ctx, {
             type: 'line',
             data: data,
-            options: {}
+            options: {
+                title: {
+                    display: true,
+                    text: 'Candle Stick Data'
+                }
+            }
         })
     }
 
@@ -1633,7 +1643,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const chart = new Chart(ctx, {
             type: 'bar',
             data: data,
-            options: {}
+            options: {
+                title: {
+                    display: true,
+                    text: 'Company Balance Sheet Data'
+                }
+            }
         })
     }
     /*
