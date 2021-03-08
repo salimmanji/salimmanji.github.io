@@ -62,7 +62,6 @@ li {
 
 h2,h3 {
   text-decoration: underline;
-  
 }
 
 #headerDiv {
@@ -75,7 +74,6 @@ h2,h3 {
  color: white;
  border-radius: 2px;
 }
-
 
 ul#companyList {
   list-style-type: none;

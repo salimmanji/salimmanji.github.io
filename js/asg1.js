@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const dBox = $("div.d section");
     const loader1 = document.querySelector(`#loader1`);
     const loader2 = document.querySelector(`#loader2`);
-    document.querySelectorAll(".lds-ring").forEach((l) => l.style.display = "none");
+    $$(".lds-ring").forEach((l) => l.style.display = "none");
 
     /*
     * Event listener for references.
@@ -156,12 +156,14 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#companyList").addEventListener("mouseover", (e) => {
         if (e.target.nodeName == "LI") {
             e.target.style.color = 'red';
+            e.target.style.textDecoration = "underline"
         }
     });
 
     $("#companyList").addEventListener("mouseout", (e) => {
         if (e.target.nodeName == "LI") {
             e.target.style.color = 'black';
+            e.target.style.textDecoration = "none"
         }
     });
 
@@ -630,28 +632,28 @@ document.addEventListener("DOMContentLoaded", function () {
     * @param h is the parent element hBox.
     */
     function createAdditionalRows(h) {
-        const rev = financeHeaders("Revenue");
+        const rev = financeHeaders("Revenue:");
         h.appendChild(rev);
         currentStock.financials.revenue.forEach(y => {
             const ele = newh4maker();
             ele.textContent = currency(y);
             h.appendChild(ele);
         })
-        const earn = financeHeaders("Earnings");
+        const earn = financeHeaders("Earnings:");
         h.appendChild(earn);
         currentStock.financials.earnings.forEach(y => {
             const ele = newh4maker();
             ele.textContent = currency(y);
             h.appendChild(ele);
         })
-        const assets = financeHeaders("Assets");
+        const assets = financeHeaders("Assets:");
         h.appendChild(assets);
         currentStock.financials.assets.forEach(y => {
             const ele = newh4maker();
             ele.textContent = currency(y);
             h.appendChild(ele);
         })
-        const liab = financeHeaders("Liabilities");
+        const liab = financeHeaders("Liabilities:");
         h.appendChild(liab);
         currentStock.financials.liabilities.forEach(y => {
             const ele = newh4maker();
@@ -701,7 +703,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /*
-    * After switching to the default view, this method allows for the charts to be rebuilt.
+    * After switching to the default view, this method allows for the charts to be (re)built.
     */
     function rebuildCharts() {
         const fBox = $("#boxF");
@@ -1416,7 +1418,7 @@ document.addEventListener("DOMContentLoaded", function () {
             options: {
                 title: {
                     display: true,
-                    text: 'Stock Volume and Closing Price per Day'
+                    text: 'Daily Stock Volumes and Closing Prices'
                 }
             }
         })
