@@ -1,6 +1,7 @@
 /*
 * COMP3512 Assignment 1
 * Salim Manji
+* Please note, I enjoy writing self-documenting code. While verbose, it helps my organization and increases readability.
 */
 
 var map;
@@ -8,28 +9,34 @@ function initMap() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    /*
+    * Helper methods to create or target elements quickly.
+    */
     const elementMaker = element => document.createElement(`${element}`);
     const $ = element => document.querySelector(`${element}`);
     const $$ = element => document.querySelectorAll(`${element}`);
-    let currentStock;
 
     const companiesAPI = 'https://www.randyconnolly.com/funwebdev/3rd/api/stocks/companies.php';
     const stockAPI = 'https://www.randyconnolly.com/funwebdev/3rd/api/stocks/history.php';
     let companies = [];
     let stocks = [];
+    let candleDataMin = [];
+    let candleDataMax = [];
+    let candleDataAvg = [];
     let filterableStockData;
+    let currentStock;
     const searchBox = $('.search');
     const companyList = $('#companyList');
     const eBox = $("div.e section");
     const dBox = $("div.d section");
 
     $("#creditLabel").addEventListener("mouseover", () => {
-        
-            const referenceDetails = elementMaker("div");
-            referenceDetails.innerHTML = `<strong>Author:</strong> Salim Manji <strong>References:</strong> <u>https://dyclassroom.com/chartjs/how-to-create-a-bar-graph-using-chartjs</u>, <u>https://www.chartjs.org/docs/latest/</u>, <u>https://developer.mozilla.org/en-US/</u> (numerous pages including speach synthesis, number formatting, scroll bar/overflow-y, array sorting, etc.), <u>https://www.w3schools.com/</u>(numerous pages including selectors, events, style properties, etc.)`
-            $("#header").appendChild(referenceDetails);
-            setTimeout(function() {
-                referenceDetails.innerHTML = "";
+        const referenceDetails = elementMaker("div");
+        referenceDetails.setAttribute("id", "headerDiv")
+        referenceDetails.innerHTML = `<strong>Author:</strong> Salim Manji <strong>References:</strong> <u>https://pages.github.com/</u>, <u>https://dyclassroom.com/chartjs/how-to-create-a-bar-graph-using-chartjs</u>, <u>https://www.chartjs.org/docs/latest/</u>, <u>https://developer.mozilla.org/en-US/</u> (numerous pages including speech synthesis, number formatting, scroll bar/overflow-y, array sorting, etc.), <u>https://www.w3schools.com/</u>(numerous pages including selectors, events, style properties, etc.), <u>https://www.codeinwp.com/blog/google-maps-javascript-api/</u>, <u>https://developers.google.com/maps/documentation/javascript/overview</u>`
+        $("#header").appendChild(referenceDetails);
+        setTimeout(function () {
+            referenceDetails.innerHTML = "";
         }, 5000)
     }, false);
 
@@ -43,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (response.ok) {
                     return response.json();
                 } else {
-                    throw new Error("Fetch failed");
+                    throw new Error("First fetch failed");
                 }
             })
             .then(data => {
@@ -111,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Once the data has been received (or pulled from storage), populate each box for the default view.
+    * @param data is the data to be sorted.
     */
     function companylist(data) {
         $("div.b section").style.display = "block";
@@ -132,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /*
-    * The two event listeners below provide visual feedback for the user that they can click on a company to see the relevant information.
+    * The two event listeners below provide visual feedback for the user that they can mouseover a company in the list to act as visual feedback.
     */
     $("#companyList").addEventListener("mouseover", (e) => {
         if (e.target.nodeName == "LI") {
@@ -148,6 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * The functions below handles the population of data for a specific company.
+    * @param c is the company information to use to populate each div.
     */
     function populateDivs(c) {
         buildCompanyDetails(c);
@@ -159,6 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * The second fetch to consume specific stock data for the user selected company
+    * @param s is the single stock from which to populate the financial values for.
     */
     function populateStockData(s) {
         const specificData = `${stockAPI}?symbol=${s}`;
@@ -167,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (response.ok) {
                     return response.json();
                 } else {
-                    throw new Error("Fetch failed");
+                    throw new Error("Second fetch failed");
                 }
             })
             .then(data => {
@@ -202,18 +212,22 @@ document.addEventListener("DOMContentLoaded", function () {
         dBox.appendChild(minheader);
 
         sortSmallest("open");
+        candleDataMax.push(Number(filterableStockData[0].open));
         let curr = open();
         dBox.appendChild(curr);
 
         sortSmallest("close");
+        candleDataMax.push(Number(filterableStockData[0].close));
         curr = close();
         dBox.appendChild(curr);
 
         sortSmallest("low");
+        candleDataMax.push(Number(filterableStockData[0].low));
         curr = low();
         dBox.appendChild(curr);
 
         sortSmallest("high");
+        candleDataMax.push(Number(filterableStockData[0].high));
         curr = high();
         dBox.appendChild(curr);
 
@@ -223,7 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /*
-    * Sort functions
+    * Sort functions from smallest to largest using the specified property.
     */
     function sortLargest(prop) {
         filterableStockData = stocks.sort((a, b) => {
@@ -231,6 +245,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    /*
+    * Sort functions from largest to smallest using the specified property.
+    */
     function sortSmallest(prop) {
         filterableStockData = stocks.sort((a, b) => {
             return b[prop] - a[prop];
@@ -245,18 +262,22 @@ document.addEventListener("DOMContentLoaded", function () {
         dBox.appendChild(minheader);
 
         sortLargest("open");
+        candleDataMin.push(Number(filterableStockData[0].open));
         let curr = open();
         dBox.appendChild(curr);
 
         sortLargest("close");
+        candleDataMin.push(Number(filterableStockData[0].close));
         curr = close();
         dBox.appendChild(curr);
 
         sortLargest("low");
+        candleDataMin.push(Number(filterableStockData[0].low));
         curr = low();
         dBox.appendChild(curr);
 
         sortLargest("high");
+        candleDataMin.push(Number(filterableStockData[0].high));
         curr = high();
         dBox.appendChild(curr);
 
@@ -265,6 +286,9 @@ document.addEventListener("DOMContentLoaded", function () {
         dBox.appendChild(curr);
     }
 
+    /*
+    * The methods below filter the stock data by the requested property, and pulls the smallest value for each.
+    */
     function vol() {
         const vol = newvolmaker(filterableStockData[0].volume);
         return vol;
@@ -296,13 +320,13 @@ document.addEventListener("DOMContentLoaded", function () {
     function createAverages() {
         const avgheader = newHeaderElement("Average");
         dBox.appendChild(avgheader);
-        const avgopen = avgFinder("open");
+        const avgopen = newh4maker(avgFinder("open"));
         dBox.appendChild(avgopen);
-        const avgclose = avgFinder("close");
+        const avgclose = newh4maker(avgFinder("close"));
         dBox.appendChild(avgclose);
-        const avglow = avgFinder("low");
+        const avglow = newh4maker(avgFinder("low"));
         dBox.appendChild(avglow);
-        const avghigh = avgFinder("high");
+        const avghigh = newh4maker(avgFinder("high"));
         dBox.appendChild(avghigh);
         const avgvol = avgVol();
         dBox.appendChild(avgvol);
@@ -327,7 +351,8 @@ document.addEventListener("DOMContentLoaded", function () {
             dataCount++;
         }
         average /= dataCount;
-        return newh4maker(average)
+        candleDataAvg.push(average);
+        return average;
     }
 
     function mountStockData() {
@@ -349,6 +374,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method provided from the labs to format currency values.
+    * @param num is the number to format.
+    * @return formatted number.
     */
     const currency = function (num) {
         return new Intl.NumberFormat('en-us', {
@@ -359,6 +386,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Similar to the above helper method, this method formats the stock volume fields with commas.
+    * @param d is the volume data to format
+    * @return formatted volume
     */
     function newvolmaker(d) {
         const ele = elementMaker('h4');
@@ -370,7 +399,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /*
+    * Helper method to format numbers.
+    * @param num is the number to format.
+    * @return number is the formatted number.
+    */
+    function numMaker(num) {
+        const number = new Intl.NumberFormat('en-us', {
+            style: 'decimal',
+            maximumFractionDigits: 0
+        }).format(num);
+        return number;
+    }
+
+    /*
     * Helper method to create an H4 element for each value for the relevant stock data.
+    * @param d is the data to populate as the H4 element's text content.
+    * @return ele is the populated element, ready to be appended into the page.
     */
     function newh4maker(d) {
         const ele = elementMaker('h4');
@@ -380,6 +424,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method to create a new Date element. 
+    * @param d is the date to populate
+    * @return ele is the built element, ready to be populated on the page.
     */
     function newdatemaker(d) {
         const ele = elementMaker('h4');
@@ -449,7 +495,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 hideDefaultBoxes();
                 populateInfoBox();
                 populateFinancialData();
-                //build chart boxes
             })
         }
     }
@@ -477,27 +522,27 @@ document.addEventListener("DOMContentLoaded", function () {
             lineDatesData = lineDates();
             lineCloses = lineDataClose();
             lineVols = lineDataVol();
-            console.log(lineDatesData)
-            console.log(lineCloses)
-            console.log(lineVols)
             populateLineChart(lineDatesData, lineCloses, lineVols);
+            populateCandleChart();
         }
     }
 
     /*
     * Helper method to create date information for the Line Graph. I struggled to incorporate the actual dates into the chart, as they were String elements.
     * Due to time constraints, I opted to instead label each date a number between 1 and 61.
+    * @return currArray is the array of "dates"
     */
     function lineDates() {
         const currArray = [];
         for (let i = 0; i < stocks.length; i++) {
-            currArray.push(Number(i));
+            currArray.push(numMaker(i));
         }
         return currArray;
     }
 
     /*
     * Helper method for the Line Graph. 
+    * @return currArray is the array of close values for the user selected stock.
     */
     function lineDataClose() {
         const currArray = [];
@@ -510,6 +555,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method for volume line in Line Graph. Due to the size of the values, I opted to divide by 10,000 to allow for a common scale.
+    * @return volArray is the array of volume values for the user selected stocks (divided by 10,000 due to their size relative to the closing price).
     */
     function lineDataVol() {
         const volArray = [];
@@ -519,6 +565,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Populates information into an array for the Bar Chart
+    * @return dataArray is the complete data array to build the bar chart with.
     */
     function buildChartData() {
 
@@ -536,6 +583,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method to create the first Row of the Financial Information section of the Chart View.
+    * @param h is the parent element (hBox) to append to.
     */
     function createFirstRow(h) {
         const years = financeHeaders("Year:");
@@ -550,6 +598,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method used to create headers for "Revenue", "Earnings", "Assets" and "Liabilities"
+    * @param text is  the text to set the element to.
+    * @return ele is the populated element, ready to be inserted into the page.
     */
     function financeHeaders(text) {
         const ele = elementMaker("h3");
@@ -560,6 +610,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * The following function populates the relevant financial statistics for each year for the user selected company.
+    * @param h is the parent element hBox.
     */
     function createAdditionalRows(h) {
         const rev = financeHeaders("Revenue");
@@ -598,7 +649,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /*
-    * Function that creates the Company Info pane in the Chart View. Included here is the speach synthesis button and the close button to return to the default view.
+    * Function that creates the Company Info pane in the Chart View. Included here is the speech synthesis button and the close button to return to the default view.
     */
     function populateInfoBox() {
         const gBox = $("#boxG");
@@ -644,6 +695,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method to rebuild each chart type
+    * @param parentNode is the parent node to append the child to.
+    * @param id is the id attribute that will be assigned to the element.
     */
     function chartMaker(parentNode, id) {
 
@@ -679,6 +732,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method to create an H3 element
+    * @param name is the header name.
+    * @return ele is the completed element, ready to be populated into the page.
     */
     function newHeaderElement(name) {
         const ele = elementMaker(`h3`);
@@ -690,6 +745,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method to populate the aBox.
+    * @param c is the user selected company.
     */
     function buildCompanyDetails(c) {
         const aBox = $("div.a section");
@@ -704,6 +760,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method to create the company Logo. 
+    * @param c is the company the user has selected.
     */
     function logoMaker(c) {
         const label = elementMaker('label');
@@ -722,6 +779,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method to populate the selected company's name and symbol information.
+    * @param c is the company to use, selected by the user.
+    * @return h2 is the completed h2 element that can be mounted into the page.
     */
     function nameMaker(c) {
         const h2 = elementMaker('h2');
@@ -733,6 +792,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method populate the selected company's website information.
+    * @param c is the company the user has selected.
+    * @return anchor is the completed anchor tag to be mounted into the page.
     */
     function webMaker(c) {
         const anchor = elementMaker('a');
@@ -746,6 +807,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method to populate the selected company's adress information.
+    * @param c is the company selected by the user.
+    * @return span is the completed span element to be mounted into the page.
     */
     function addMaker(c) {
         const span = elementMaker(`span`);
@@ -758,6 +821,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Populates the sector and subsector information for the selected company.
+    * @param c is the user selected company.
+    * @return span is the completed span element to be mounted.
     */
     function sectorMaker(c) {
         const span = elementMaker(`span`);
@@ -770,6 +835,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * Helper method to organize the selected company's description and populate it.
+    * @param c is the current company selected by the user.
+    * @return span is the completed span element to be mounted into the page.
     */
     function descMaker(c) {
         const span = elementMaker(`span`);
@@ -787,6 +854,9 @@ document.addEventListener("DOMContentLoaded", function () {
     /*
     * The function below populates the line chart of volume and closing values for each date. Yes, it is a little long.
     * I struggled to find a way to populate it dynamically as the data needed to be a number, not a string, and therefore had to complete this section manually instead.
+    * @param dates is the array of "date values".
+    * @param closes is the array of close values.
+    * @param vols is the array of volume values.
     */
     function populateLineChart(dates, closes, vols) {
         const ctx = document.querySelector('#line').getContext('2d');
@@ -1320,7 +1390,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 borderColor: [
                     'rgba(54, 162, 235, 0.4)'
                 ]
-
             }
             ]
         }
@@ -1331,8 +1400,157 @@ document.addEventListener("DOMContentLoaded", function () {
             options: {}
         })
     }
+
     /*
-    * The function below populates the bar chart of for 2017, 2018 and 2019.
+    ,
+                
+    */
+
+    function populateCandleChart() {
+        const ctx = document.querySelector('#candle').getContext('2d');
+
+        const data = {
+            labels: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
+            datasets: [{
+                label: "Open",
+                data: [{
+                    x: 10,
+                    y: candleDataMax[0]
+                },
+                {
+                    x: 10,
+                    y: candleDataMin[0]
+                }],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)'
+                ]
+            },
+            {
+                label: "Avg Close",
+                data: [{
+                    x: 5,
+                    y: candleDataAvg[0]
+                },
+                {
+                    x: 15,
+                    y: candleDataAvg[0]
+                }],
+                backgroundColor: [
+                    'rgba(0,0,0,0)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)'
+                ]
+            },
+            {
+                label: "Close",
+                data: [{
+                    x: 25,
+                    y: candleDataMax[1]
+                },
+                {
+                    x: 25,
+                    y: candleDataMin[1]
+                }],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)'
+                ]
+            },
+            {
+                label: "Avg Close",
+                data: [{
+                    x: 20,
+                    y: candleDataAvg[1]
+                },
+                {
+                    x: 30,
+                    y: candleDataAvg[1]
+                }],
+                backgroundColor: [
+                    'rgba(0,0,0,0)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)'
+                ]
+            },
+            {
+                label: "Low",
+                data: [{
+                    x: 40,
+                    y: candleDataMax[2]
+                },
+                {
+                    x: 40,
+                    y: candleDataMin[2]
+                }],
+                borderColor: [
+                    'rgba(255, 206, 86, 1)'
+                ]
+            },
+            {
+                label: "Avg Low",
+                data: [{
+                    x: 35,
+                    y: candleDataAvg[2]
+                },
+                {
+                    x: 45,
+                    y: candleDataAvg[2]
+                }],
+                backgroundColor: [
+                    'rgba(0,0,0,0)'
+                ],
+                borderColor: [
+                    'rgba(255, 206, 86, 1)'
+                ]
+            },
+
+            {
+                label: "High",
+                data: [{
+                    x: 55,
+                    y: candleDataMax[3]
+                },
+                {
+                    x: 55,
+                    y: candleDataMin[3]
+                }],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)'
+                ]
+            },
+            {
+                label: "Avg High",
+                data: [{
+                    x: 50,
+                    y: candleDataAvg[3]
+                },
+                {
+                    x: 60,
+                    y: candleDataAvg[3]
+                }],
+                backgroundColor: [
+                    'rgba(0,0,0,0)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)'
+                ]
+            }
+
+            ]
+        }
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {}
+        })
+    }
+
+
+    /*
+    * The function below populates the bar chart data for 2017, 2018 and 2019.
+    * @param inputData is the array of data to use to build the bar chart.
     */
     function populateBarChart(inputData) {
         const ctx = document.querySelector('#barGraph').getContext('2d');
@@ -1409,6 +1627,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     /*
     * This function creates the map based on the corporation's latitudinal and longitudinal data provided.
+    * @param c is the company to populate the map.
     */
     function populateMap(c) {
         const divD = document.querySelector("#map");
@@ -1428,6 +1647,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
     * After creating the map object, a map marker is generated.
+    * @param map is the map to populate.
+    * @param latitude is the selected company's latitude.
+    * @param longitude is the selected company's longitude.
+    * @param company is the name of the company selected by the user.
     */
     function createMarker(map, latitude, longitude, company) {
         let imageLatLong = { lat: latitude, lng: longitude };
