@@ -1,7 +1,7 @@
 /*
 * COMP3512 Assignment 1
+* W2021
 * Salim Manji
-* Please note, I enjoy writing self-documenting code. While verbose, it helps my organization and increases readability.
 */
 
 var map;
@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const $ = element => document.querySelector(`${element}`);
     const $$ = element => document.querySelectorAll(`${element}`);
 
+    /*
+     * Global variables.
+    */
     const companiesAPI = 'https://www.randyconnolly.com/funwebdev/3rd/api/stocks/companies.php';
     const stockAPI = 'https://www.randyconnolly.com/funwebdev/3rd/api/stocks/history.php';
     let companies = [];
@@ -29,11 +32,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const companyList = $('#companyList');
     const eBox = $("div.e section");
     const dBox = $("div.d section");
+    const loader1 = document.querySelector(`#loader1`);
+    const loader2 = document.querySelector(`#loader2`);
+    document.querySelectorAll(".lds-ring").forEach((l) => l.style.display = "none");
 
+    /*
+    * Event listener for references.
+    */
     $("#creditLabel").addEventListener("mouseover", () => {
         const referenceDetails = elementMaker("div");
         referenceDetails.setAttribute("id", "headerDiv")
-        referenceDetails.innerHTML = `<strong>Author:</strong> Salim Manji <strong>References:</strong> <u>https://pages.github.com/</u>, <u>https://dyclassroom.com/chartjs/how-to-create-a-bar-graph-using-chartjs</u>, <u>https://www.chartjs.org/docs/latest/</u>, <u>https://developer.mozilla.org/en-US/</u> (numerous pages including speech synthesis, number formatting, scroll bar/overflow-y, array sorting, etc.), <u>https://www.w3schools.com/</u>(numerous pages including selectors, events, style properties, etc.), <u>https://www.codeinwp.com/blog/google-maps-javascript-api/</u>, <u>https://developers.google.com/maps/documentation/javascript/overview</u>`
+        referenceDetails.innerHTML = `<strong>Author:</strong> Salim Manji <strong>References:</strong> <a href="https://pages.github.com/" >https://pages.github.com/</a>, <a href="https://dyclassroom.com/chartjs/how-to-create-a-bar-graph-using-chartjs">https://dyclassroom.com/chartjs/how-to-create-a-bar-graph-using-chartjs</a>, <a href="https://www.chartjs.org/docs/latest/">https://www.chartjs.org/docs/latest/</a>, <a href="https://developer.mozilla.org/en-US/">https://developer.mozilla.org/en-US/</a> (numerous pages including speech synthesis, number formatting, scroll bar/overflow-y, array sorting, etc.), <a href="https://www.w3schools.com/">https://www.w3schools.com/</a>(numerous pages including selectors, events, style properties, etc.), <a href="https://www.codeinwp.com/blog/google-maps-javascript-api/">https://www.codeinwp.com/blog/google-maps-javascript-api/</a>, <a href="https://developers.google.com/maps/documentation/javascript/overview">https://developers.google.com/maps/documentation/javascript/overview</a>, <a href="https://www.color-hex.com/">https://www.color-hex.com/</a>`
         $("#header").appendChild(referenceDetails);
         setTimeout(function () {
             referenceDetails.innerHTML = "";
@@ -45,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
     * Once the data has been retrieved, the information boxes are created and populated.
     */
     if (localStorage.getItem("companies") === null) {
+        loader1.style.display = "block";
         fetch(companiesAPI)
             .then(response => {
                 if (response.ok) {
@@ -54,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             })
             .then(data => {
+                loader1.style.display = "none";
                 companies.push(...data);
                 companylist(data)
                 updateStorage(data);
@@ -171,6 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
     * @param s is the single stock from which to populate the financial values for.
     */
     function populateStockData(s) {
+        loader2.style.display = "block";
         const specificData = `${stockAPI}?symbol=${s}`;
         fetch(specificData)
             .then(response => {
@@ -181,6 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             })
             .then(data => {
+                loader2.style.display = "none";
                 stocks.splice(0, stocks.length);
                 stocks.push(...data);
                 stocks = stocks.sort((a, b) => {
@@ -200,6 +213,11 @@ document.addEventListener("DOMContentLoaded", function () {
         mountStockData();
     }
 
+    
+    /*
+     * While sorting the lists to populate average/min/max open/close/low/high/volume information, I decided to also populate arrays required for creating the candlestick chart.
+     * This method calls each subsequent helper method to populate min and max data for the selected company.
+    */
     function determineStats() {
         $("div.d section").style.display = "grid";
         createAverages();
@@ -434,7 +452,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /*
-    * Function to create stock header, add relevant data and attach event listeners.
+    * Function to create stock header, add relevant data and attach event listeners to the headers for sorting.
     */
     function createStockHeader() {
         if (!$(`#headerBox`)) {
@@ -491,7 +509,6 @@ document.addEventListener("DOMContentLoaded", function () {
             $('div.e').insertBefore(headerBox, eBox);
 
             stockButton.addEventListener("click", () => {
-
                 hideDefaultBoxes();
                 populateInfoBox();
                 populateFinancialData();
@@ -655,7 +672,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const gBox = $("#boxG");
         const cNameSymbol = elementMaker("span");
         cNameSymbol.setAttribute("id", "chartName");
-        cNameSymbol.innerHTML = `${currentStock.name} (${currentStock.symbol})`
+        cNameSymbol.innerHTML = `<strong><u>${currentStock.name} (${currentStock.symbol}</u></strong>)`
         gBox.appendChild(cNameSymbol);
         const cDescription = elementMaker("p");
         cDescription.setAttribute("id", "chartDesc");
@@ -699,7 +716,6 @@ document.addEventListener("DOMContentLoaded", function () {
     * @param id is the id attribute that will be assigned to the element.
     */
     function chartMaker(parentNode, id) {
-
         const div1 = elementMaker("div");
         const canvas1 = elementMaker("canvas");
         canvas1.setAttribute("id", id);
@@ -826,7 +842,7 @@ document.addEventListener("DOMContentLoaded", function () {
     */
     function sectorMaker(c) {
         const span = elementMaker(`span`);
-        span.innerHTML = `<strong><u>Sector:</u></strong> ${c.sector} <strong><u>SubSector:</u></strong> ${c.subindustry} `;
+        span.innerHTML = `<strong><u>Sector:</u></strong> ${c.sector} <strong><u>SubSector:</u></strong> ${c.subindustry}`;
         span.setAttribute(`id`, `cSector`);
         span.style.display = "block";
         span.style.paddingTop = "15px";
@@ -1402,10 +1418,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /*
-    ,
-                
+    * This function populates the candlestick chart using arrays created earlier.
     */
-
     function populateCandleChart() {
         const ctx = document.querySelector('#candle').getContext('2d');
 
@@ -1426,7 +1440,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ]
             },
             {
-                label: "Avg Close",
+                label: "Avg Open",
                 data: [{
                     x: 5,
                     y: candleDataAvg[0]
@@ -1439,7 +1453,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     'rgba(0,0,0,0)'
                 ],
                 borderColor: [
-                    'rgba(54, 162, 235, 1)'
+                    'rgba(54, 162, 235, 0.4)'
                 ]
             },
             {
@@ -1470,7 +1484,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     'rgba(0,0,0,0)'
                 ],
                 borderColor: [
-                    'rgba(255, 99, 132, 1)'
+                    'rgba(255, 99, 132, 0.4)'
                 ]
             },
             {
@@ -1501,7 +1515,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     'rgba(0,0,0,0)'
                 ],
                 borderColor: [
-                    'rgba(255, 206, 86, 1)'
+                    'rgba(255, 206, 86, 0.4)'
                 ]
             },
 
@@ -1533,11 +1547,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     'rgba(0,0,0,0)'
                 ],
                 borderColor: [
-                    'rgba(75, 192, 192, 1)'
+                    'rgba(75, 192, 192, 0.4)'
                 ]
-            }
-
-            ]
+            }]
         }
 
         const chart = new Chart(ctx, {
@@ -1546,7 +1558,6 @@ document.addEventListener("DOMContentLoaded", function () {
             options: {}
         })
     }
-
 
     /*
     * The function below populates the bar chart data for 2017, 2018 and 2019.
@@ -1560,9 +1571,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 label: "Revenue",
                 data: [inputData[0][0], inputData[1][0], inputData[2][0]],
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.4)',
-                    'rgba(255, 99, 132, 0.4)',
-                    'rgba(255, 99, 132, 0.4)'
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(255, 99, 132, 0.6)'
                 ],
                 borderColor: [
                     'rgba(255, 99, 132, 1)',
@@ -1575,9 +1586,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 label: "Earnings",
                 data: [inputData[0][1], inputData[1][1], inputData[2][1]],
                 backgroundColor: [
-                    'rgba(54, 162, 235, 0.4)',
-                    'rgba(54, 162, 235, 0.4)',
-                    'rgba(54, 162, 235, 0.4)'
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(54, 162, 235, 0.6)'
                 ],
                 borderColor: [
                     'rgba(54, 162, 235, 1)',
@@ -1590,9 +1601,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 label: "Assets",
                 data: [inputData[0][2], inputData[1][2], inputData[2][2]],
                 backgroundColor: [
-                    'rgba(255, 206, 86, 0.4)',
-                    'rgba(255, 206, 86, 0.4)',
-                    'rgba(255, 206, 86, 0.4)'
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(255, 206, 86, 0.6)'
                 ],
                 borderColor: [
                     'rgba(255, 206, 86, 1)',
@@ -1605,9 +1616,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 label: "Liabilities",
                 data: [inputData[0][3], inputData[1][3], inputData[2][3]],
                 backgroundColor: [
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(75, 192, 192, 0.6)'
                 ],
                 borderColor: [
                     'rgba(75, 192, 192, 1)',
